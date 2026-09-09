@@ -1,0 +1,6 @@
+allowBuilds:
+  '@tsparticles/engine': false
+  esbuild: set this to true or false
+  msgpackr-extract: set this to true or false
+  unrs-resolver: false
+  workerd: set this to true or false
