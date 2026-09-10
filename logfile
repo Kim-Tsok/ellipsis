@@ -1,0 +1,6 @@
+2026-09-10 22:12:12.321 WAT [12] LOG:  starting PostgreSQL 18.6 (Homebrew) on x86_64-pc-linux-gnu, compiled by gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+2026-09-10 22:12:12.322 WAT [12] LOG:  could not create IPv6 socket for address "::1": Operation not permitted
+2026-09-10 22:12:12.322 WAT [12] LOG:  could not create IPv4 socket for address "127.0.0.1": Operation not permitted
+2026-09-10 22:12:12.322 WAT [12] WARNING:  could not create listen socket for "localhost"
+2026-09-10 22:12:12.322 WAT [12] FATAL:  could not create any TCP/IP sockets
+2026-09-10 22:12:12.328 WAT [12] LOG:  database system is shut down
