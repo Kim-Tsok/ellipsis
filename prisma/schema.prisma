@@ -9,13 +9,15 @@ generator client {
 
 model User {
   id            String   @id @default(uuid())
-  email         String   @unique
   name          String?
+  email         String?  @unique
+  emailVerified DateTime?
   image         String?
-  createdAt     DateTime @default(now())
-  accounts      Account[]
-  sessions      Session[]
-  pings         Ping[]
+  password      String?
+  role          String?  @default("user")
+  Account       Account[] @relation("userId")
+  Session       Session[] @relation("userId")
+  Ping          Ping[]    @relation("userPing", fields: [id], references: [userId])
 }
 
 model Account {
@@ -24,27 +26,30 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
+  refresh_token      String?
+  access_token       String?
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String?
   session_state      String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  oauth_token_secret String?
+  oauth_token        String?
+  user               User    @relation("userId", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   @@unique([provider, providerAccountId])
 }
 
 model Session {
   id           String   @id @default(uuid())
-  sessionToken String   @unique
   userId       String
-  expires      DateTime
+  expiresAt    DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress    String?
+  userAgent    String?
+  user         User     @relation("userId", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Ping {
@@ -54,6 +59,5 @@ model Ping {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User?    @relation("userPing", fields: [userId], references: [id], onDelete: SetNull)
 }

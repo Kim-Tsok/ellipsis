@@ -1,6 +1,5 @@
 {
   "name": "ellipsis",
-  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,34 +7,24 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma skills sync || exit 0",
-    "contract:emit": "prisma contract emit"
+    "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
-    "@better-auth/infra": "^0.4.7",
-    "@better-auth/prisma-adapter": "^1.7.3",
     "@prisma/client": "^7.10.0",
-    "@prisma/orm-postgres": "8.0.0-rc.8",
-    "@tsparticles/preset-links": "^4.3.2",
-    "better-auth": "^1.7.3",
-    "dotenv": "^17.4.2",
-    "next": "16.3.1",
-    "next-pwa": "^5.6.0",
+    "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "three": "^0.185.1",
-    "vanta": "^0.5.24"
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@prisma/cli-engine": "0.2.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.1",
-    "prisma": "8.0.0-rc.10",
+    "eslint-config-next": "16.3.4",
+    "prisma": "8.0.0-rc.13",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "pnpm@11.24.0"
 }
