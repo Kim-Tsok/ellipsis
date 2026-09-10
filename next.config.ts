@@ -1,10 +1,5 @@
-import { withPWA } from "next-pwa";
+import withPWA from "next-pwa";
 import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  // Your existing config options
-  // ...
-};
 
 const pwaConfig = withPWA({
   dest: "public",
@@ -12,6 +7,12 @@ const pwaConfig = withPWA({
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
   // ...
-})(nextConfig);
+});
 
-export default pwaConfig;
+const nextConfig: NextConfig = {
+  // Your existing config options
+  // ...
+  turbopack: {}, // Add empty turbopack config to prevent warnings
+};
+
+export default pwaConfig(nextConfig);
