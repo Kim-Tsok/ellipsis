@@ -1,0 +1,126 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# AI Rules for Next.js BetterAuth Template Project
+
+This file provides guidelines for the AI assistant to generate relevant and consistent code for this project.
+
+## 1. Project Overview
+
+- **Description:** A full-stack web application template for easily creating authentication-protected web applications with Next.js and PostgreSQL.
+- **Framework:** Next.js (using Turbopack for development).
+
+## 2. Technical Stack
+
+- **Language:** TypeScript
+- **Frontend Framework:** React (v19)
+- **Styling:** Tailwind CSS (v4) with `prettier-plugin-tailwindcss`. `clsx` and `tailwind-merge` are used for class name management.
+- **UI Components:** Uses `shadcn/ui` components (located in `src/components/ui/`), which are built on top of Radix UI primitives (`@radix-ui/*`).
+- **Backend/API:** Handled by Next.js API routes.
+- **Database ORM:** Prisma (`@prisma/client`), using PostgreSQL as the database.
+- **Authentication:** NextAuth.js (`next-auth`) with Prisma Adapter (`@auth/prisma-adapter`). Uses `bcryptjs` for password hashing.
+- **Forms:** React Hook Form (`react-hook-form`) with Zod (`zod`) for validation (`@hookform/resolvers`).
+- **State Management:** Potentially using React Context or Zustand/Jotai (not explicitly defined yet, but common with Next.js). `next-themes` is used for theme management.
+- **Notifications:** `sonner` is used for toasts/notifications.
+
+## 3. Code Style & Conventions
+
+- **Formatting:** Prettier is configured (`.prettierrc.json`). Ensure code is formatted using `npm run format` or the Prettier extension.
+  - Key settings: `semi: true`, `singleQuote: true`, `tabWidth: 2`, `trailingComma: "es5"`, `printWidth: 80`.
+- **Linting:** ESLint is configured (`eslint.config.mjs`) extending `next/core-web-vitals` and `next/typescript`. It also integrates `eslint-config-prettier` to avoid conflicts.
+- **TypeScript:** Strict mode is enabled (`"strict": true` in `tsconfig.json`).
+- **Path Aliases:** `@/*` alias is configured in `tsconfig.json` to point to `./src/*`. Use this for imports from the `src` directory.
+
+## 4. Directory Structure (Inferred)
+
+- `src/app/`: Contains Next.js App Router pages and layouts.
+- `src/components/`: Contains reusable React components.
+  - `src/components/ui/`: Contains `shadcn/ui` components.
+- `src/lib/`: Utility functions, potentially configuration files, constants. Features within `lib` (like `auth`) should be structured with subdirectories for `hooks/`, `constants/`, `utils/`, etc., where applicable.
+  - `src/lib/validations/`: Contains Zod validation schemas, often structured by feature (e.g., `auth/`).
+- `prisma/`: Contains Prisma schema (`schema.prisma`) and migrations.
+- `public/`: Static assets accessible directly via URL.
+
+## 5. Key Libraries & Usage
+
+- **Next.js:** Follow App Router conventions. Use Server Components and Client Components appropriately.
+- **Prisma:** Use the Prisma Client for database interactions. Remember to generate the client after schema changes (`npx prisma generate`).
+- **Tailwind CSS:** Use utility classes for styling. Leverage `tailwind-merge` and `clsx` when combining classes conditionally.
+- **shadcn/ui:** Prefer using existing components from `src/components/ui/`.
+- **NextAuth.js:** Use the provided hooks and functions for authentication checks and session management.
+- **Validation (Zod):** Use Zod (`zod`) as the primary library for schema definition and validation on both frontend (e.g., with React Hook Form) and backend (e.g., API route inputs). Define reusable schemas in `src/lib/validations/` where possible.
+- **Brevo:** Used as the SMTP service for sending transactional emails (e.g., email verification, password reset).
+- **Constants:**
+  - **Global Site Constants:** Use `src/lib/constants/site.ts` for application-wide constants like `APP_NAME`.
+  - **Route Constants:** Use `src/lib/constants/routes.ts` for all internal page links, API routes, and redirects. Define paths structued by area (e.g., `SITE_PATHS`, `AUTH_PATHS`, `PROTECTED_PATHS`, `API_AUTH_PATHS`, `API_APP_PATHS`).
+  - **Feature-Specific Constants:** For constants related to a specific feature (e.g., auth), create dedicated files like `src/lib/[feature]/constants/[feature].ts`. Use these for UI messages (toasts, errors, dialog text, empty states), server action/API error strings, or other recurring text specific to that feature.
+
+## 6. Things to Avoid
+
+- **Don't ignore ESLint/Prettier:** Ensure code adheres to the configured rules.
+- **Avoid large Client Components:** Keep Client Components small and push logic to Server Components or utility functions where possible.
+- **Check for existing utilities:** Before writing new helper functions, check `src/lib/` or `src/utils/` (if it exists).
+- **Filter sensitive data from responses:** Ensure that sensitive data is not exposed in responses.
+
+## 7. Maintaining These Rules
+
+- **Synchronization:** If you (the user) manually make significant changes to the project structure, core dependencies, or established conventions, please consider updating this file. If the AI assistant detects potential discrepancies between the project and these rules, it should point them out and ask whether the code or the rules should be adjusted.
+
+## 8. Commenting Style
+
+- **Language:** All comments must be in English.
+- **Clarity:** Comments should clearly explain _what_ the code does, especially for complex or non-obvious parts.
+- **No Change Logs:** Do not generate comments describing _what was changed_ in an edit.
+- **Formatting:** Use the following formats for structure:
+  - **H1 (Major Section / File Header):**
+    ```typescript
+    // * ==========================================================================
+    // *                                SECTION NAME
+    // * ==========================================================================
+    ```
+  - **H2 (Function Group / Significant Block):**
+    ```typescript
+    // **  Subsection Name  ** //
+    ```
+  - **H3 (Specific Part / Minor Block):**
+    ```typescript
+    // * Specific detail or step
+    ```
+  - **Short Inline Explanation:**
+    ```typescript
+    // Explain a single non-obvious line
+    ```
+    _Use sparingly._ Focus on H1-H3 and commenting blocks of code rather than every line.
+
+## 9. API Design Conventions
+
+- **Routing:** Use Next.js App Router Route Handlers (`route.ts`) placed under `src/app/api/`.
+- **Request/Response:**
+  - Use `NextResponse.json()` for all responses.
+  - Strive for a consistent response structure (e.g., `{ message: string, data?: T }` for success, `{ message: string }` or `{ error: string }` for errors).
+  - Use appropriate HTTP status codes.
+- **Validation:**
+  - Validate all incoming data (body, params, query) with Zod schemas at the start of each handler.
+  - Place schemas in `src/lib/validations/`, structured per feature.
+  - Use `safeParse` for validation error handling.
+- **Error Handling:** Differentiate between _expected_ errors (part of the application flow) and _unexpected_ errors (bugs/exceptions).
+  - **API Routes (Route Handlers):**
+    - Handle _unexpected_ server errors (e.g., database connection issues) using `try...catch`, log the error, and return a generic 500 response (`{ message: 'Internal Server Error' }`).
+    - Handle _expected/foreseen_ errors (e.g., validation failures, resource not found, conflicts) by returning specific error messages and appropriate 4xx status codes (e.g., `{ message: 'Invalid input' }` with 400).
+  - **Server Actions:**
+    - Handle _expected_ errors (e.g., form validation failures) by returning state/messages from the action, typically managed with `useActionState` on the client. Avoid throwing exceptions for expected validation flows.
+  - **UI Components (Server & Client):**
+    - Handle _unexpected_ rendering errors or errors during data fetching/effects within specific route segments using `error.tsx` files. These act as React Error Boundaries, provide a fallback UI, and allow recovery attempts via the `reset` function.
+    - Use `not-found.tsx` and the `notFound()` function for handling "Not Found" (404) scenarios gracefully.
+    - Consider `global-error.tsx` for handling errors in the root layout, although this is less common.
+- **Separation of Concerns:**
+  - Keep route handlers lean. Extract complex logic, database interactions, and third-party calls to modules in `src/lib/` (e.g., `services/`, `utils/`, `db/`).
+- **Security:**
+  - Hash passwords.
+  - Validate authorization/ownership.
+  - Filter sensitive data from responses.
+
+_This is an initial draft based on project configuration files. It should be reviewed and updated as the project evolves._

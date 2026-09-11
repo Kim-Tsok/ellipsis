@@ -1,63 +1,84 @@
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// * ---------------------------------
+// *            USERS
+// * ---------------------------------
+
+// ** User model ** //
 model User {
-  id            String   @id @default(uuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?  @unique
-  emailVerified DateTime?
+  email         String     @unique
+  emailVerified Boolean    @default(false)
   image         String?
-  password      String?
-  role          String?  @default("user")
-  Account       Account[] @relation("userId")
-  Session       Session[] @relation("userId")
-  Ping          Ping[]    @relation("userPing", fields: [id], references: [userId])
+  role          UserRole   @default(USER)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  accounts      Account[]
+  sessions      Session[]
 }
 
+// ** BetterAuth required models ** //
 model Account {
-  id                 String   @id @default(uuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-  oauth_token_secret String?
-  oauth_token        String?
-  user               User    @relation("userId", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  @@unique([provider, providerAccountId])
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String    @map("providerAccountId")
+  providerId            String    @map("provider")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  accessTokenExpiresAt  DateTime? @map("expires_at")
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?   @map("id_token")
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
 }
 
 model Session {
-  id           String   @id @default(uuid())
-  userId       String
-  expiresAt    DateTime
-  sessionToken String   @unique
-  accessToken  String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  ipAddress    String?
-  userAgent    String?
-  user         User     @relation("userId", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id        String   @id @default(cuid())
+  expiresAt DateTime @map("expires")
+  token     String   @unique @map("sessionToken")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Ping {
-  id          String   @id @default(uuid())
-  userId      String
-  content     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
-  user        User?    @relation("userPing", fields: [userId], references: [id], onDelete: SetNull)
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+}
+
+// ** UserRole enum ** //
+enum UserRole {
+  USER
+  ADMIN
 }
