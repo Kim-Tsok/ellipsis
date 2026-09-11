@@ -27,7 +27,7 @@ export function Hero() {
               <br />
               We’ll handle the rest.
             </h1>
-            <p className="font-instrument-serif mt-6 max-w-md text-base leading-relaxed text-[#4a4a4a] sm:text-lg">
+            <p className="font-instrument-serif mt-6 max-w-md text-base leading-relaxed text-[#1a1a1a] sm:text-lg">
               Capture the half-formed ideas, reminders, and fragments that show
               up throughout the day. Ellipsis figures out how they connect, lays
               them out as a graph, and nudges you to finish the ones worth
