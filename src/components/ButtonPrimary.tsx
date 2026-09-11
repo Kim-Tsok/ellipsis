@@ -37,15 +37,23 @@ function ButtonSurface({
   return (
     <span
       className={cn(
-        'relative inline-flex h-[53px] min-w-[159px] items-center justify-center overflow-hidden rounded-[110px] bg-[#22464d] p-[2px] transition-transform duration-150 group-hover:brightness-[1.04] group-active:translate-y-px',
+        'relative inline-flex h-[53px] min-w-[159px] items-center justify-center overflow-hidden rounded-[110px] bg-[#22464d] p-[2px]',
         className
       )}
     >
-      <span className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-[110px] bg-[#4FA1AF] px-7">
+      <span
+        className={cn(
+          'relative flex h-full w-full items-center justify-center overflow-hidden rounded-[110px] px-7'
+        )}
+      >
+        {/* Inner background */}
+        <span className="absolute inset-0 rounded-[110px] bg-[#4FA1AF]" />
+        {/* Blur that expands from normal size to fill the whole button on hover */}
         <span
           aria-hidden
-          className="absolute bottom-[-6px] left-1/2 h-[25px] w-[97px] -translate-x-1/2 rounded-full bg-[#6ccada] blur-[7px]"
+          className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 h-[25px] w-[97px] rounded-full bg-[#6ccada] blur-[7px] group-hover:bottom-0 group-hover:left-0 group-hover:-translate-x-0 group-hover:-translate-y-0 group-hover:h-full group-hover:w-full transition-all duration-300"
         />
+        {/* Sparkles */}
         <span aria-hidden>
           {sparkleDots.map((dot, index) => (
             <span

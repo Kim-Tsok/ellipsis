@@ -6,6 +6,19 @@ import { ButtonPrimary } from '@/components/ButtonPrimary';
 import type { AuthMode } from '@/components/auth/AuthForm/types';
 import { cn } from '@/lib/utils';
 
+type EmailAuthFieldsProps = {
+  mode: AuthMode;
+  email: string;
+  password: string;
+  onEmailChange: (value: string) => void;
+  onPasswordChange: (value: string) => void;
+  onSubmit: () => void;
+  onGoogle: () => void;
+  isLoading?: boolean;
+  googleLoading?: boolean;
+  error?: string | null;
+};
+
 const fieldClass =
   'font-instrument-serif w-full border-0 border-b border-[#1a1a1a]/50 bg-transparent px-0 py-3 text-xl text-[#1a1a1a] outline-none transition-colors placeholder:text-[#1a1a1a]/40 focus:border-[#4FA1AF] focus:border-2';
 
