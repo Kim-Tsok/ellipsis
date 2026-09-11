@@ -1,32 +1,24 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { GoogleButton } from '@/components/auth/GoogleButton';
-import { GithubButton } from '@/components/auth/GithubButton';
-import { DiscordButton } from '@/components/auth/DiscordButton';
-import { TwitterButton } from '@/components/auth/TwitterButton';
-import { AuthDivider } from '@/components/auth/AuthDivider';
-import { AuthForm } from '@/components/auth/AuthForm';
+import { AuthShell } from '@/components/auth/AuthShell';
+import { EmailAuthFields } from '@/components/auth/EmailAuthFields';
 import { useAuthForm } from '@/lib/auth/hooks/useAuthForm';
-import type { AuthFormData } from '@/components/auth/AuthForm/types';
 import { useGoogleAuth } from '@/lib/auth/hooks/useGoogleAuth';
-import { useGithubAuth } from '@/lib/auth/hooks/useGithubAuth';
-import { useDiscordAuth } from '@/lib/auth/hooks/useDiscordAuth';
-import { useTwitterAuth } from '@/lib/auth/hooks/useTwitterAuth';
 import { DEFAULT_LOGIN_REDIRECT } from '@/lib/auth/constants/auth';
+import { AUTH_PATHS } from '@/lib/constants/routes';
 import { authClient } from '@/lib/auth/auth-client';
 import { Spinner } from '@/components/ui/spinner';
-import { APP_NAME } from '@/lib/constants/site';
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, isPending: authLoading } = authClient.useSession();
-  const authenticated = !!session;
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     if (searchParams.get('verified') === 'true') {
@@ -48,133 +40,52 @@ function LoginContent() {
     onError: (err: Error) => setError(err.message),
   });
 
-  const { loading: githubLoading, handleGithubSignIn } = useGithubAuth({
-    onError: (err: Error) => setError(err.message),
-  });
-
-  const { loading: discordLoading, handleDiscordSignIn } = useDiscordAuth({
-    onError: (err: Error) => setError(err.message),
-  });
-
-  const { loading: twitterLoading, handleTwitterSignIn } = useTwitterAuth({
-    onError: (err: Error) => setError(err.message),
-  });
-
   useEffect(() => {
-    if (!authLoading && authenticated) {
+    if (!authLoading && session) {
       router.push(DEFAULT_LOGIN_REDIRECT);
     }
-  }, [authenticated, authLoading, router]);
+  }, [session, authLoading, router]);
 
-  const isAnyLoading =
-    formLoading ||
-    googleLoading ||
-    githubLoading ||
-    discordLoading ||
-    twitterLoading ||
-    authLoading;
-
-  if (authLoading || (!authLoading && authenticated)) {
+  if (authLoading || session) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-white">
         <Spinner className="h-10 w-10" />
       </div>
     );
   }
 
-  const handleFormSubmit = handleSubmit as (
-    data: AuthFormData
-  ) => Promise<void>;
-
   return (
-    <div className="bg-background flex min-h-screen">
-      <div className="flex flex-1 flex-col px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-sm lg:w-96">
-          <div>
-            <Link href="/" className="mb-6 inline-block">
-              <div className="bg-primary/10 flex h-12 w-12 flex-shrink-0 items-center space-x-2 rounded-lg p-1.5">
-                <Image
-                  className="h-10 w-auto"
-                  src="/logo.svg"
-                  alt={`${APP_NAME} Logo`}
-                  width={40}
-                  height={40}
-                />
-                <span className="p-2 text-2xl font-bold tracking-tight whitespace-nowrap">
-                  {APP_NAME}
-                </span>
-              </div>
-            </Link>
-            <h2 className="text-foreground mt-4 text-2xl leading-9 font-bold tracking-tight sm:text-3xl">
-              Sign in to your account
-            </h2>
-            <p className="text-md text-muted-foreground mt-2 leading-6">
-              Don&apos;t have an account?{' '}
-              <Link
-                href="/auth/register"
-                className="text-primary hover:text-primary/90 font-semibold"
-              >
-                Sign up
-              </Link>
-            </p>
-          </div>
+    <AuthShell>
+      <h1 className="font-instrument-serif text-5xl leading-[1.05] text-[#1a1a1a] sm:text-6xl">
+        Hi
+        <span className="text-[#4FA1AF]"> there</span>
+        ...
+        <br />
+        Welcome Back
+      </h1>
 
-          <div className="mt-10 space-y-6">
-            <div className="grid grid-cols-2 gap-3">
-              <GoogleButton
-                mode="login"
-                onSuccess={handleGoogleSignIn}
-                isLoading={googleLoading}
-                disabled={isAnyLoading}
-              />
-              <GithubButton
-                mode="login"
-                onSuccess={handleGithubSignIn}
-                isLoading={githubLoading}
-                disabled={isAnyLoading}
-              />
-              <DiscordButton
-                mode="login"
-                onSuccess={handleDiscordSignIn}
-                isLoading={discordLoading}
-                disabled={isAnyLoading}
-              />
-              <TwitterButton
-                mode="login"
-                onSuccess={handleTwitterSignIn}
-                isLoading={twitterLoading}
-                disabled={isAnyLoading}
-              />
-            </div>
-            <AuthDivider text="Or sign in with email" />
-            <AuthForm
-              mode="login"
-              onSubmit={handleFormSubmit}
-              isLoading={formLoading}
-              error={error}
-            />
-            <div className="text-right text-sm">
-              <Link
-                href="/auth/forgot-password"
-                className="text-primary hover:text-primary/90 font-semibold"
-              >
-                Forgot your password?
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+      <EmailAuthFields
+        mode="login"
+        email={email}
+        password={password}
+        onEmailChange={setEmail}
+        onPasswordChange={setPassword}
+        onSubmit={() => handleSubmit({ email, password })}
+        onGoogle={handleGoogleSignIn}
+        isLoading={formLoading}
+        googleLoading={googleLoading}
+        error={error}
+      />
 
-      <div className="relative hidden w-0 flex-1 lg:block">
-        <Image
-          className="absolute inset-0 h-full w-full object-cover"
-          src="/login.webp"
-          alt="Sign in illustration"
-          fill
-          priority
-        />
-      </div>
-    </div>
+      <p className="font-instrument-serif mt-10 text-[#8a8a8a]">
+        <Link
+          href={AUTH_PATHS.REGISTER}
+          className="underline decoration-[#8a8a8a] underline-offset-4 transition-colors hover:text-[#4FA1AF] hover:decoration-[#4FA1AF]"
+        >
+          Not you? Create an account
+        </Link>
+      </p>
+    </AuthShell>
   );
 }
 
@@ -182,7 +93,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center">
+        <div className="flex min-h-screen items-center justify-center bg-white">
           <Spinner className="h-10 w-10" />
         </div>
       }

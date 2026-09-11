@@ -1,21 +1,14 @@
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { FlatCompat } from '@eslint/eslintrc';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  {
-    ignores: ['**/generated/prisma/**'],
-  },
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
-  eslintConfigPrettier,
-];
+const eslintConfig = [{
+  ignores: ['**/generated/prisma/**'],
+}, ...nextCoreWebVitals, ...nextTypescript, eslintConfigPrettier];
 
 export default eslintConfig;

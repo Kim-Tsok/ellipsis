@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "postman:generate": "node Postman/create-postman-collection.js",
@@ -47,13 +47,13 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.25",
     "lucide-react": "^0.503.0",
-    "next": "15.3.8",
+    "next": "16.3.4",
     "next-auth": "^4.24.11",
     "next-qrcode": "^2.5.1",
     "next-themes": "^0.4.6",
-    "react": "^19.0.0",
+    "react": "19.3.0",
     "react-day-picker": "^9.11.1",
-    "react-dom": "^19.0.0",
+    "react-dom": "19.3.0",
     "react-hook-form": "^7.66.1",
     "recharts": "^3.4.1",
     "sonner": "^2.0.7",
@@ -62,16 +62,15 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@faker-js/faker": "^9.7.0",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20.17.32",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "@types/uuid": "^11.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.1",
+    "eslint": "10.10.0",
+    "eslint-config-next": "16.3.4",
     "eslint-config-prettier": "^10.1.2",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
@@ -80,5 +79,9 @@
     "tsx": "^4.19.4",
     "tw-animate-css": "^1.2.8",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0"
   }
 }

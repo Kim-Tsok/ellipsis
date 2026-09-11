@@ -7,7 +7,7 @@ import {
   API_AUTH_ROUTE_PREFIX,
 } from '@/lib/constants/routes';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { nextUrl } = request;
 
   // BetterAuth session cookie check
@@ -19,6 +19,7 @@ export async function middleware(request: NextRequest) {
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(API_AUTH_ROUTE_PREFIX);
   const isProtectedRoute =
+    nextUrl.pathname.startsWith(PROTECTED_PATHS.APP) ||
     nextUrl.pathname.startsWith(PROTECTED_PATHS.SETTINGS_BASE) ||
     nextUrl.pathname.startsWith(PROTECTED_PATHS.DASHBOARD_BASE);
 

@@ -21,6 +21,7 @@ export const AUTH_PATHS = {
 
 // ** Protected Area Paths (require login) ** //
 export const PROTECTED_PATHS = {
+  APP: '/app',
   SETTINGS_BASE: '/settings',
   DOCUMENTATION_BASE: '/documentation',
   DASHBOARD_BASE: '/dashboard',
@@ -37,8 +38,7 @@ export const API_AUTH_PATHS = {
 } as const;
 
 // ** Default Redirects ** //
-export const DEFAULT_LOGIN_REDIRECT_PATH: string =
-  PROTECTED_PATHS.SETTINGS_BASE;
+export const DEFAULT_LOGIN_REDIRECT_PATH: string = PROTECTED_PATHS.APP;
 export const DEFAULT_LOGOUT_REDIRECT_PATH: string = SITE_PATHS.HOME;
 
 // ** Public Route Patterns ** //
@@ -65,7 +65,8 @@ export const ROOT_PATH = '/';
 // Paths that should use a minimal layout (e.g., no Navbar/Footer)
 
 export const ISOLATED_LAYOUT_PATHS = [
+  SITE_PATHS.HOME,
+  PROTECTED_PATHS.APP,
   ...Object.values(AUTH_PATHS),
-
-  '/signup/:path*', // Match /signup/ and any sub-paths like /signup/[userId]/tack
+  '/signup/:path*',
 ];

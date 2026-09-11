@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { GoogleIcon } from './GoogleIcon';
 import type { GoogleButtonProps } from './types';
 import { Loader2 } from 'lucide-react';
+
 export const GoogleButton = ({
   mode,
   onSuccess,
@@ -25,7 +26,7 @@ export const GoogleButton = ({
       ) : (
         <>
           <GoogleIcon />
-          {mode === 'login' ? 'Google' : 'Google'}
+          Continue with Google
         </>
       )}
     </Button>

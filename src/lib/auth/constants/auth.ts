@@ -15,7 +15,7 @@ export const AUTH_ROUTES = {
   AUTH_ERROR: '/auth/error',
 };
 
-export const DEFAULT_LOGIN_REDIRECT = '/';
+export const DEFAULT_LOGIN_REDIRECT = '/app';
 
 export const PUBLIC_ROUTES = [
   AUTH_ROUTES.LOGIN,

@@ -1,27 +1,39 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Instrument_Serif } from 'next/font/google';
 import './globals.css';
 import { Providers } from '../app/providers';
 import { Toaster } from 'sonner';
 import { APP_NAME } from '@/lib/constants/site';
 import PageWrapper from '@/components/PageWrapper';
 
+// TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 const inter = Inter({
-  variable: '--font-sans',
+  variable: '--font-inter',
+  subsets: ['latin'],
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: '--font-instrument-serif',
+  weight: '400',
   subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: `${APP_NAME} | Next.js Better Auth Template`,
-  description: `${APP_NAME} is a Next.js Better Auth Template`,
-  keywords: ['Next.js', 'Authentication', 'Postgres', 'Template'],
+  title: `${APP_NAME}`,
+  description:
+    'Capture half-formed ideas as they come. Ellipsis connects your fragments and nudges you to finish the ones that matter.',
+  keywords: ['second brain', 'notes', 'ideas', 'graph', 'Ellipsis'],
   icons: {
     icon: '/favicon.ico',
     apple: '/favicon.ico',
   },
   openGraph: {
-    title: `${APP_NAME} | Next.js Better Auth Template`,
-    description: `${APP_NAME} is a Next.js Better Auth Template`,
+    title: `${APP_NAME}`,
+    description:
+      'A second brain that tidies your thoughts for you, instead of making you do it upfront.',
     type: 'website',
     locale: 'en_US',
   },
@@ -33,8 +45,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="flex min-h-screen flex-col antialiased">
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body className="flex min-h-screen flex-col bg-white antialiased">
         <Providers>
           <PageWrapper>{children}</PageWrapper>
           <Toaster richColors position="bottom-right" />
