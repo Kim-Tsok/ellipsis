@@ -172,7 +172,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/home/komma/Documents/Projects/ellipsis-app/src/generated/prisma",
+      "value": "/home/komma/Documents/Projects/ellipsis/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -186,11 +186,12 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/komma/Documents/Projects/ellipsis-app/prisma/schema.prisma",
+    "sourceFilePath": "/home/komma/Documents/Projects/ellipsis/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.6.0",
@@ -199,12 +200,11 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "value": "postgresql://neondb_owner:npg_WyE8dBc3UGLR@ep-raspy-dawn-b1qbomni.c-5.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
       }
     }
   },
