@@ -3,7 +3,7 @@
 import { ButtonPrimary } from '@/components/ButtonPrimary';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { TopographicBackground } from '@/components/brand/TopographicBackground';
-import { ThoughtOrbit } from '@/components/landing-page/ThoughtOrbit';
+import HeroImg from '../../../public/hero-img.png'
 import { AUTH_PATHS, PROTECTED_PATHS } from '@/lib/constants/routes';
 import { authClient } from '@/lib/auth/auth-client';
 
@@ -27,7 +27,7 @@ export function Hero() {
               <br />
               We’ll handle the rest.
             </h1>
-            <p className="font-instrument-serif mt-6 max-w-md text-base leading-relaxed text-[#1a1a1a] sm:text-lg">
+            <p className="font-instrument-serif mt-6 max-w-md text-base text-justify leading-relaxed text-[#1a1a1a] sm:text-lg">
               Capture the half-formed ideas, reminders, and fragments that show
               up throughout the day. Ellipsis figures out how they connect, lays
               them out as a graph, and nudges you to finish the ones worth
@@ -40,8 +40,8 @@ export function Hero() {
             </div>
           </div>
 
-          <div className="pointer-events-none mt-12 w-full lg:absolute lg:top-1/2 lg:right-[-4%] lg:mt-0 lg:w-[52%] lg:-translate-y-1/2">
-            <ThoughtOrbit />
+          <div className="pointer-events-none mt-12 w-full lg:absolute lg:top-1/2 lg:right-[-4%] lg:mt-0 lg:w-[52%] lg:-translate-y-1/2 hidden lg:block">
+            <img src={HeroImg.src} alt="Hero Image" className="w-full h-auto" />
           </div>
         </div>
       </div>

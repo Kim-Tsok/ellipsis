@@ -56,10 +56,8 @@ function LoginContent() {
 
   return (
     <AuthShell>
-      <h1 className="font-instrument-serif text-5xl leading-[1.05] text-[#1a1a1a] sm:text-6xl">
-        Hi
-        <span className="text-[#4FA1AF]"> there</span>
-        ...
+      <h1 className="font-instrument-serif text-6xl leading-[1.05] tracking-tight text-[#1a1a1a] sm:text-7xl">
+        Hi, <span className="text-[#4FA1AF]">there</span>...
         <br />
         Welcome Back
       </h1>

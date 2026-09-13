@@ -88,7 +88,7 @@ ${contextText || 'No related notes found.'}
 `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3.8-flash',
+    model: 'gemini-3.5-flash-lite',
     contents: prompt,
   });
 
@@ -113,7 +113,7 @@ export async function organizeUserNotes() {
     .join('\n---\n');
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3.5-flash-lite',
     contents: `Analyze and group these notes into concise categories:\n\n${notesList}`,
     config: {
       responseMimeType: 'application/json',

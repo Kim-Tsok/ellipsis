@@ -51,8 +51,7 @@ function RegisterContent() {
   return (
     <AuthShell>
       <h1 className="font-instrument-serif text-5xl leading-[1.05] text-[#1a1a1a] sm:text-6xl">
-        Just think
-        <span className="text-[#4FA1AF]">...</span>
+        Just think ...
         <br />
         Create your space
       </h1>
