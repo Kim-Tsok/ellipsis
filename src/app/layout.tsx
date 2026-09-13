@@ -4,7 +4,6 @@ import './globals.css';
 import { Providers } from '../app/providers';
 import { Toaster } from 'sonner';
 import { APP_NAME } from '@/lib/constants/site';
-import PageWrapper from '@/components/PageWrapper';
 
 // TODO: Cache Components adoption. Refactor this route so this opt-out can be removed.
 // See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
@@ -46,9 +45,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
-      <body className="flex min-h-screen flex-col bg-white antialiased">
+      <body className="flex min-h-screen flex-col antialiased">
         <Providers>
-          <PageWrapper>{children}</PageWrapper>
+          {children}
           <Toaster richColors position="bottom-right" />
         </Providers>
       </body>

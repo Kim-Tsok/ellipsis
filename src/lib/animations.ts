@@ -1,11 +1,13 @@
 // Standardized Framer Motion curves for Ellipsis
 // Provides a fluid, Apple-style "decelerate" and physics-based feel.
 
+import type { Easing } from 'framer-motion';
+
 export const ANIMATION_CURVES = {
   // Apple's signature "decelerate" curve for page/route transitions
-  decelerate: [0.32, 0.72, 0, 1] as const,
+  decelerate: [0.32, 0.72, 0, 1] as [number, number, number, number],
   // Fast ease-out for micro-interactions (buttons, hovers)
-  micro: 'easeOut',
+  micro: 'easeOut' as Easing,
 };
 
 export const SPRING_CONFIGS = {
@@ -18,8 +20,14 @@ export const SPRING_CONFIGS = {
 };
 
 export const TRANSITIONS = {
-  microInteraction: { duration: 0.15, ease: ANIMATION_CURVES.micro },
-  pageTransition: { duration: 0.35, ease: ANIMATION_CURVES.decelerate },
+  microInteraction: {
+    duration: 0.15,
+    ease: ANIMATION_CURVES.micro,
+  },
+  pageTransition: {
+    duration: 0.35,
+    ease: ANIMATION_CURVES.decelerate as Easing,
+  },
   panelSpring: SPRING_CONFIGS.panel,
   spatialSpring: SPRING_CONFIGS.spatial,
   toastSpring: SPRING_CONFIGS.toast,

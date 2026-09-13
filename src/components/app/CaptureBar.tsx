@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Mic, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ANIMATION_CURVES, TRANSITIONS } from '@/lib/animations';
+import { TRANSITIONS } from '@/lib/animations';
 
 export function CaptureBar() {
   const [value, setValue] = useState('');
@@ -22,7 +22,7 @@ export function CaptureBar() {
     <motion.div 
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.2, duration: 0.4, ease: ANIMATION_CURVES.decelerate }}
+      transition={{ delay: 0.2, duration: 0.4, ease: [0.32, 0.72, 0, 1] as const }}
       className="absolute bottom-8 left-1/2 z-20 flex w-full max-w-lg -translate-x-1/2 items-center rounded-full border border-gray-200 bg-white/90 p-1.5 shadow-lg backdrop-blur-md transition-shadow duration-300 focus-within:shadow-xl focus-within:ring-2 focus-within:ring-[#4FA1AF]/20"
     >
       <form onSubmit={handleSubmit} className="flex w-full items-center">
