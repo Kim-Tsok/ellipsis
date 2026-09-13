@@ -1,29 +1,35 @@
 'use client';
 
-import { signOut } from '@/lib/auth/auth-client';
-import { ButtonPrimary } from '@/components/ButtonPrimary';
-import { useRouter } from 'next/navigation';
+import { DotPanel } from '@/components/app/DotPanel';
+import { SearchBar } from '@/components/app/SearchBar';
+import { CaptureBar } from '@/components/app/CaptureBar';
+import { motion } from 'framer-motion';
 
-export default function AppPage() {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      router.push('/auth/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
+export default function AppGraphPage() {
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center py-12">
-      <h1 className="font-instrument-serif text-3xl text-[#1a1a1a] mb-6">
-        Welcome to Ellipsis
-      </h1>
-      <ButtonPrimary onClick={handleLogout} className="mt-6">
-        Logout
-      </ButtonPrimary>
+    <div className="flex h-full w-full flex-col">
+      <DotPanel>
+        <SearchBar />
+        
+        {/* Placeholder for the Graph Nodes */}
+        <div className="relative flex h-full w-full flex-1 items-center justify-center">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-center"
+          >
+            <p className="font-instrument-serif text-3xl text-gray-400">
+              Your graph is empty.
+            </p>
+            <p className="mt-2 text-sm text-gray-400">
+              Capture a ping to get started.
+            </p>
+          </motion.div>
+        </div>
+
+        <CaptureBar />
+      </DotPanel>
     </div>
   );
 }
