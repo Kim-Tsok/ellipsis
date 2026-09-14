@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   ChevronDown,
   ChevronLeft,
@@ -19,6 +19,9 @@ import {
 } from 'lucide-react';
 
 import { BrandLogo } from '@/components/brand/BrandLogo';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { authClient } from '@/lib/auth/auth-client';
+import { AUTH_ROUTES } from '@/lib/auth/constants/auth';
 
 const NAV_ITEMS = [
   {
@@ -43,9 +46,12 @@ const NAV_ITEMS = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session, isPending: isSessionLoading } = authClient.useSession();
 
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -95,6 +101,31 @@ export function AppSidebar() {
     }
 
     return pathname.startsWith(href);
+  };
+
+  const user = session?.user;
+  const displayName = user?.name?.trim() || user?.email?.split('@')[0] || 'Account';
+  const email = user?.email || '';
+  const initials = displayName
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => router.replace(AUTH_ROUTES.LOGIN),
+        },
+      });
+    } catch (error) {
+      console.error('Failed to sign out:', error);
+      setIsSigningOut(false);
+    }
   };
 
   return (
@@ -335,11 +366,11 @@ export function AppSidebar() {
             >
               <div className="border-b border-black/[0.06] px-4 py-3">
                 <p className="font-instrument-serif text-[17px] text-[#202627]">
-                  John Doe
+                  {displayName}
                 </p>
 
                 <p className="mt-0.5 truncate font-sans text-[11px] text-[#8a9495]">
-                  john@example.com
+                  {email}
                 </p>
               </div>
 
@@ -353,21 +384,14 @@ export function AppSidebar() {
                   Profile
                 </Link>
 
-                <Link
-                  href="/app/settings"
-                  onClick={() => setProfileOpen(false)}
-                  className="flex h-10 items-center gap-3 rounded-xl px-3 font-sans text-[13px] text-[#596466] transition-colors hover:bg-[#eef8f9] hover:text-[#1f777f]"
-                >
-                  <Settings size={16} strokeWidth={1.5} />
-                  Settings
-                </Link>
-
                 <button
                   type="button"
+                  onClick={handleSignOut}
+                  disabled={isSigningOut}
                   className="flex h-10 w-full items-center gap-3 rounded-xl px-3 font-sans text-[13px] text-[#8a5555] transition-colors hover:bg-[#fff5f5]"
                 >
                   <LogOut size={16} strokeWidth={1.5} />
-                  Sign out
+                  {isSigningOut ? 'Signing out…' : 'Sign out'}
                 </button>
               </div>
             </div>
@@ -386,23 +410,22 @@ export function AppSidebar() {
             ].join(' ')}
           >
             {/* Avatar */}
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#4FA1AF]/20 bg-[#dff2f4]">
-              <CircleUserRound
-                size={19}
-                strokeWidth={1.4}
-                className="text-[#438d98]"
-              />
-            </div>
+            <Avatar className="h-9 w-9 shrink-0 border border-[#4FA1AF]/20 bg-[#dff2f4]">
+              <AvatarImage src={user?.image || undefined} alt="" />
+              <AvatarFallback className="bg-[#dff2f4] font-sans text-[11px] font-medium text-[#438d98]">
+                {isSessionLoading ? <CircleUserRound size={19} strokeWidth={1.4} /> : initials}
+              </AvatarFallback>
+            </Avatar>
 
             {!collapsed && (
               <>
                 <div className="min-w-0 flex-1 text-left">
                   <p className="truncate font-sans text-[12px] font-medium text-[#374143]">
-                    John Doe
+                    {displayName}
                   </p>
 
                   <p className="truncate font-sans text-[10px] text-[#929b9d]">
-                    john@example.com
+                    {email}
                   </p>
                 </div>
 
