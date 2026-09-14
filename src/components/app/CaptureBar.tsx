@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Mic, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TRANSITIONS } from '@/lib/animations';
+import { IconCircleSurface } from '@/components/ButtonPrimary';
 
 export function CaptureBar() {
   const [value, setValue] = useState('');
@@ -12,14 +13,14 @@ export function CaptureBar() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!value.trim()) return;
-    
+
     // Animate the submission here (to be implemented later)
     console.log('Captured:', value);
     setValue('');
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.2, duration: 0.4, ease: [0.32, 0.72, 0, 1] as const }}
@@ -35,7 +36,7 @@ export function CaptureBar() {
           onBlur={() => setIsFocused(false)}
           className="w-full bg-transparent px-4 font-instrument-serif text-xl outline-none placeholder:text-gray-400"
         />
-        
+
         <AnimatePresence mode="popLayout">
           {value.trim().length > 0 ? (
             <motion.button
@@ -45,9 +46,10 @@ export function CaptureBar() {
               exit={{ scale: 0.8, opacity: 0 }}
               transition={TRANSITIONS.microInteraction}
               type="submit"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-white transition-transform hover:scale-105 active:scale-95"
+              aria-label="Submit thought"
+              className="group shrink-0 rounded-full transition-transform hover:scale-105 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1a1a1a]"
             >
-              <ArrowUp className="h-5 w-5" />
+              <IconCircleSurface icon={<ArrowUp className="h-5 w-5" />} size={40} tone="dark" />
             </motion.button>
           ) : (
             <motion.button
@@ -57,9 +59,10 @@ export function CaptureBar() {
               exit={{ scale: 0.8, opacity: 0 }}
               transition={TRANSITIONS.microInteraction}
               type="button"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#4FA1AF]/10 text-[#4FA1AF] transition-colors hover:bg-[#4FA1AF]/20"
+              aria-label="Record a thought"
+              className="group shrink-0 rounded-full transition-transform hover:scale-105 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22464d]"
             >
-              <Mic className="h-5 w-5" />
+              <IconCircleSurface icon={<Mic className="h-5 w-5" />} size={40} tone="teal" />
             </motion.button>
           )}
         </AnimatePresence>

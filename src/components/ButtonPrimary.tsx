@@ -67,7 +67,7 @@ function ButtonSurface({
             />
           ))}
         </span>
-        <span className="font-instrument-serif relative z-10 text-xl leading-none whitespace-nowrap text-white">
+        <span className="font-instrument-serif relative z-10 flex items-center justify-center gap-2 text-xl leading-none whitespace-nowrap text-white">
           {children}
         </span>
       </span>
@@ -107,3 +107,127 @@ export function ButtonPrimary({
 }
 
 export default ButtonPrimary;
+
+// --- Circular icon button, matches the two-tone style but sized/shaped for a lone icon ---
+
+type IconCircleTone = 'teal' | 'dark';
+
+const iconCircleTones: Record<
+  IconCircleTone,
+  { ring: string; fill: string; icon: string; glow: string }
+> = {
+  // Same dark-ring + teal-fill combo as ButtonPrimary
+  teal: {
+    ring: 'bg-[#22464d]',
+    fill: 'bg-[#4FA1AF]',
+    icon: 'text-white',
+    glow: 'bg-[#6ccada]',
+  },
+  // Flat solid variant, e.g. for a "submit" action next to a teal mic button
+  dark: {
+    ring: 'bg-[#1a1a1a]',
+    fill: 'bg-[#1a1a1a]',
+    icon: 'text-white',
+    glow: 'bg-[#3a3a3a]',
+  },
+};
+
+/**
+ * Presentational-only circle (ring + fill + icon + hover glow). No button/link
+ * semantics, so it can be dropped inside any interactive wrapper — including
+ * an already-animated one, like framer-motion's <motion.button>. The parent
+ * needs a `group` class for the hover glow to activate.
+ */
+export function IconCircleSurface({
+  icon,
+  size = 44,
+  tone = 'teal',
+  className,
+}: {
+  icon: ReactNode;
+  size?: number;
+  tone?: IconCircleTone;
+  className?: string;
+}) {
+  const styles = iconCircleTones[tone];
+
+  return (
+    <span
+      className={cn(
+        'relative inline-flex items-center justify-center overflow-hidden rounded-full p-[2px]',
+        styles.ring,
+        className
+      )}
+      style={{ height: size, width: size }}
+    >
+      <span
+        className={cn(
+          'relative flex h-full w-full items-center justify-center overflow-hidden rounded-full',
+          styles.fill
+        )}
+      >
+        <span
+          aria-hidden
+          className={cn(
+            'absolute inset-0 rounded-full opacity-0 blur-[7px] transition-opacity duration-300 group-hover:opacity-60',
+            styles.glow
+          )}
+        />
+        <span
+          className={cn(
+            'relative z-10 flex items-center justify-center [&>svg]:h-5 [&>svg]:w-5',
+            styles.icon
+          )}
+        >
+          {icon}
+        </span>
+      </span>
+    </span>
+  );
+}
+
+type ButtonIconCircleProps = {
+  icon: ReactNode;
+  label: string; // required for a11y: becomes the aria-label since there's no visible text
+  href?: string;
+  size?: number; // diameter in px, defaults to 44
+  tone?: IconCircleTone;
+  className?: string;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'>;
+
+export function ButtonIconCircle({
+  icon,
+  label,
+  href,
+  size = 44,
+  tone = 'teal',
+  className,
+  type = 'button',
+  disabled,
+  ...props
+}: ButtonIconCircleProps) {
+  const focusClass =
+    'group inline-flex rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#22464d] disabled:pointer-events-none disabled:opacity-60';
+
+  const surface = <IconCircleSurface icon={icon} size={size} tone={tone} />;
+
+  if (href && !disabled) {
+    return (
+      <Link href={href} aria-label={label} className={cn(focusClass, className)}>
+        {surface}
+      </Link>
+    );
+  }
+
+  return (
+    <button
+      type={type}
+      disabled={disabled}
+      aria-label={label}
+      className={cn(focusClass, 'cursor-pointer', className)}
+      {...props}
+    >
+      {surface}
+    </button>
+  );
+}

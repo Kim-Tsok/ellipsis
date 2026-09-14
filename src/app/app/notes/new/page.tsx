@@ -1,19 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { DotPanel } from '@/components/app/DotPanel';
 import { ButtonPrimary } from '@/components/ButtonPrimary';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { createNote } from '@/app/actions/notes';
 
 export default function NoteEditorPage() {
+  const router = useRouter();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [isPending, startTransition] = useTransition();
 
   const handleSave = () => {
-    console.log('Saving note...', { title, content });
-    // AI clustering / embedding logic to be wired up here
+    if (!title.trim() || !content.trim()) return;
+
+    startTransition(async () => {
+      try {
+        const res = await createNote(title, content);
+        if (res?.success) {
+          router.push('/app/notes');
+        }
+      } catch (error) {
+        console.error('Failed to save note:', error);
+      }
+    });
   };
 
   return (
@@ -29,9 +43,13 @@ export default function NoteEditorPage() {
               <span>Back to Notes</span>
             </Link>
             
-            <ButtonPrimary onClick={handleSave} className="flex items-center gap-2 px-4 py-2 text-sm">
-              <Save className="h-4 w-4" />
-              <span>Save Note</span>
+            <ButtonPrimary 
+              onClick={handleSave} 
+              disabled={isPending || !title.trim() || !content.trim()}
+              className="flex items-center gap-2 px-4 py-2 text-sm disabled:opacity-50"
+            >
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              <span>{isPending ? 'Saving...' : 'Save Note'}</span>
             </ButtonPrimary>
           </div>
 

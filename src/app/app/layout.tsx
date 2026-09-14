@@ -4,9 +4,9 @@ import { AppSidebar } from '@/components/app/AppSidebar';
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="relative flex min-h-screen bg-white overflow-hidden">
-      {/* Background Gradient */}
-      <div className="pointer-events-none absolute inset-0 z-0 h-full w-full">
+    <div className="relative flex min-h-screen overflow-hidden bg-white">
+      {/* Background */}
+      <div className="pointer-events-none fixed inset-0 z-0">
         <Image
           src="/gradient-bg-app.png"
           alt=""
@@ -17,11 +17,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         />
       </div>
 
-      {/* Sidebar Navigation */}
+      {/* Sidebar */}
       <AppSidebar />
 
-      {/* Main Content Area */}
-      <main className="relative z-10 flex min-h-screen flex-1 pl-64 pr-6 pt-6 pb-6">
+      {/* Main Content */}
+      <main className="relative z-10 min-w-0 flex-1 px-3 pb-20 pt-3 md:px-5 md:pb-5 md:pt-5">
         {children}
       </main>
     </div>

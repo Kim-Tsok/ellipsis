@@ -54,16 +54,17 @@ export async function createNote(title: string, content: string, workspaceId?: s
 /**
  * 2. Expand a Note using Related Notes as Context (RAG)
  */
-export async function expandNoteWithContext(noteId: string) {
+// src/app/actions/notes.ts
+
+export async function expandNote(noteId: string): Promise<{ success: boolean; content: string }> {
   const user = await getAuthenticatedUser();
 
-  // Fetch current note
   const currentNote = await prisma.note.findFirst({
     where: { id: noteId, userId: user.id },
   });
+  
   if (!currentNote) throw new Error('Note not found.');
 
-  // Fetch top 3 contextually relevant notes using Cosine Distance (<=>)
   const contextNotes: Array<{ title: string; content: string }> = await prisma.$queryRaw`
     SELECT "title", "content"
     FROM "Note"
@@ -78,7 +79,7 @@ export async function expandNoteWithContext(noteId: string) {
 
   const prompt = `
 You are an expert workspace assistant. Expand and add missing details to the note below. 
-Use information from the provided Related Notes for context where relevant.
+Use information from the provided Related Notes for context where relevant. Keep the same tone.
 
 Base Note Title: ${currentNote.title}
 Base Note Content: ${currentNote.content}
@@ -88,11 +89,65 @@ ${contextText || 'No related notes found.'}
 `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3.5-flash-lite',
+    model: 'gemini-3.5-flash-lite', // Ensure this matches the model you intend to use for generation, likely 'gemini-2.5-flash'
     contents: prompt,
   });
 
-  return response.text;
+  const expandedContent = response.text;
+  if (!expandedContent) throw new Error('Failed to expand content.');
+
+  await prisma.note.update({
+    where: { id: noteId },
+    data: { content: expandedContent },
+  });
+
+  // This object now strictly matches the explicit Promise return type
+  return { success: true, content: expandedContent };
+}
+
+/**
+ * Fetch all notes for the active user
+ */
+export async function getNotes() {
+  const user = await getAuthenticatedUser();
+  const notes = await prisma.note.findMany({
+    where: { userId: user.id },
+    orderBy: { updatedAt: 'desc' },
+  });
+  return notes;
+}
+
+export async function getNoteById(id: string) {
+  const user = await getAuthenticatedUser();
+  const note = await prisma.note.findFirst({
+    where: { id, userId: user.id },
+  });
+  return note;
+}
+
+export async function updateNote(id: string, title: string, content: string) {
+  const user = await getAuthenticatedUser();
+  const textToEmbed = `${title}\n${content}`;
+
+  // Re-compute embedding so RAG stays accurate after manual edits
+  const embeddingResponse = await ai.models.embedContent({
+    model: 'text-embedding-004',
+    contents: textToEmbed,
+  });
+
+  const vector = embeddingResponse.embeddings?.[0]?.values;
+  if (!vector) throw new Error('Failed to extract embedding vector.');
+
+  await prisma.$executeRaw`
+    UPDATE "Note"
+    SET "title" = ${title},
+        "content" = ${content},
+        "embedding" = ${JSON.stringify(vector)}::vector,
+        "updatedAt" = NOW()
+    WHERE "id" = ${id} AND "userId" = ${user.id}
+  `;
+
+  return { success: true };
 }
 
 /**
