@@ -65,8 +65,8 @@ export function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEd
     editorProps: {
       attributes: {
         class: readOnly
-          ? 'min-h-52 px-5 py-4 outline-none'
-          : 'min-h-96 px-5 py-4 outline-none',
+          ? 'min-h-52 px-5 py-4 outline-none relative'
+          : 'min-h-96 px-5 py-4 outline-none relative',
       },
     },
     onUpdate: ({ editor: updatedEditor }) => onChange?.(updatedEditor.getMarkdown()),
@@ -79,7 +79,7 @@ export function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEd
   }, [editor, value]);
 
   if (!editor) {
-    return <div className="h-96 animate-pulse rounded-xl border border-gray-200/80" />;
+    return <div className="h-96 animate-pulse rounded-xl" />;
   }
 
   const setLink = () => {
@@ -94,8 +94,10 @@ export function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEd
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   };
 
+  const isEmpty = editor.getMarkdown().trim() === '';
+
   return (
-    <div className="obsidian-editor overflow-hidden rounded-xl border border-gray-200/80">
+    <div className="obsidian-editor overflow-hidden rounded-xl">
       {!readOnly && (
         <BubbleMenu
           editor={editor}
@@ -133,7 +135,14 @@ export function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEd
           </FormatButton>
         </BubbleMenu>
       )}
-      <EditorContent editor={editor} />
+      <div className="relative">
+        <EditorContent editor={editor} />
+        {!readOnly && isEmpty && (
+          <div className="absolute top-4 left-5 text-gray-400 pointer-events-none text-base">
+            Start typing...
+          </div>
+        )}
+      </div>
     </div>
   );
 }

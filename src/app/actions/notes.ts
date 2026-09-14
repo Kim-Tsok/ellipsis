@@ -18,7 +18,11 @@ async function getAuthenticatedUser() {
 /**
  * 1. Upload a Note & Compute Vector Embedding
  */
-export async function createNote(title: string, content: string, workspaceId?: string) {
+export async function createNote(
+  title: string,
+  content: string,
+  workspaceId?: string
+) {
   const user = await getAuthenticatedUser();
   const textToEmbed = `${title}\n${content}`;
 
@@ -56,16 +60,19 @@ export async function createNote(title: string, content: string, workspaceId?: s
  */
 // src/app/actions/notes.ts
 
-export async function expandNote(noteId: string): Promise<{ success: boolean; content: string }> {
+export async function expandNote(
+  noteId: string
+): Promise<{ success: boolean; content: string }> {
   const user = await getAuthenticatedUser();
 
   const currentNote = await prisma.note.findFirst({
     where: { id: noteId, userId: user.id },
   });
-  
+
   if (!currentNote) throw new Error('Note not found.');
 
-  const contextNotes: Array<{ title: string; content: string }> = await prisma.$queryRaw`
+  const contextNotes: Array<{ title: string; content: string }> =
+    await prisma.$queryRaw`
     SELECT "title", "content"
     FROM "Note"
     WHERE "userId" = ${user.id} AND "id" != ${noteId} AND "embedding" IS NOT NULL
@@ -73,13 +80,27 @@ export async function expandNote(noteId: string): Promise<{ success: boolean; co
     LIMIT 3;
   `;
 
-  const contextText = contextNotes
-    .map((n) => `[Related Note: ${n.title}]\n${n.content}`)
-    .join('\n\n');
+  // Pings are quick captures that haven't been promoted to notes yet,
+  // but they still belong to the same knowledge base, so pull in
+  // whichever ones are semantically closest to this note as well.
+  const contextPings: Array<{ content: string }> = await prisma.$queryRaw`
+    SELECT "content"
+    FROM "Ping"
+    WHERE "userId" = ${user.id} AND "embedding" IS NOT NULL
+    ORDER BY "embedding" <=> (SELECT "embedding" FROM "Note" WHERE "id" = ${noteId})
+    LIMIT 3;
+  `;
+
+  const contextText = [
+    ...contextNotes.map((n) => `[Related Note: ${n.title}]\n${n.content}`),
+    ...contextPings.map((p) => `[Related Ping]\n${p.content}`),
+  ].join('\n\n');
 
   const prompt = `
 You are an expert workspace assistant. Expand the note content below with useful missing detail.
-Use the related notes only when they are genuinely relevant and keep the original tone.
+Use the related notes and pings only when they are genuinely relevant and keep the original tone.
+Pings are short, unpolished brain-dump fragments the user captured on the fly - treat them as raw
+context clues, not finished writing to imitate.
 
 Return only the revised note body as clean Markdown. Do not add a preamble, commentary, or labels such as "Base Note Title", "Base Note Content", or "Related Context Notes". Do not repeat the title; it is stored separately.
 
@@ -88,9 +109,9 @@ Return only the revised note body as clean Markdown. Do not add a preamble, comm
   <content>${currentNote.content}</content>
 </note>
 
-<related-notes>
-${contextText || 'No related notes found.'}
-</related-notes>
+<related-context>
+${contextText || 'No related notes or pings found.'}
+</related-context>
 `;
 
   const response = await ai.models.generateContent({
@@ -165,7 +186,10 @@ export async function organizeUserNotes() {
   if (!notes.length) return { success: false, message: 'No notes found.' };
 
   const notesList = notes
-    .map((n) => `ID: ${n.id}\nTitle: ${n.title}\nExcerpt: ${n.content.slice(0, 150)}`)
+    .map(
+      (n) =>
+        `ID: ${n.id}\nTitle: ${n.title}\nExcerpt: ${n.content.slice(0, 150)}`
+    )
     .join('\n---\n');
 
   const response = await ai.models.generateContent({

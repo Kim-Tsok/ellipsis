@@ -16,6 +16,7 @@ import {
   Sparkles,
   SquarePen,
   UserRound,
+  Zap,
 } from 'lucide-react';
 
 import { BrandLogo } from '@/components/brand/BrandLogo';
@@ -29,6 +30,12 @@ const NAV_ITEMS = [
     href: '/app',
     icon: Sparkles,
     description: 'Your connected thoughts',
+  },
+  {
+    name: 'Pings',
+    href: '/app/pings',
+    icon: Zap,
+    description: 'Quick captures',
   },
   {
     name: 'Notes',
@@ -47,7 +54,8 @@ const NAV_ITEMS = [
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { data: session, isPending: isSessionLoading } = authClient.useSession();
+  const { data: session, isPending: isSessionLoading } =
+    authClient.useSession();
 
   const [collapsed, setCollapsed] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -66,7 +74,7 @@ export function AppSidebar() {
   useEffect(() => {
     window.localStorage.setItem(
       'ellipsis-sidebar-collapsed',
-      String(collapsed),
+      String(collapsed)
     );
   }, [collapsed]);
 
@@ -104,7 +112,8 @@ export function AppSidebar() {
   };
 
   const user = session?.user;
-  const displayName = user?.name?.trim() || user?.email?.split('@')[0] || 'Account';
+  const displayName =
+    user?.name?.trim() || user?.email?.split('@')[0] || 'Account';
   const email = user?.email || '';
   const initials = displayName
     .split(/\s+/)
@@ -152,20 +161,14 @@ export function AppSidebar() {
               aria-label="Ellipsis home"
               className="flex h-10 w-10 items-center justify-center rounded-xl transition-colors hover:bg-black/[0.04]"
             >
-              <BrandLogo
-                variant="mark"
-                className="h-7 w-7 text-[#151515]"
-              />
+              <BrandLogo variant="mark" className="h-7 w-7 text-[#151515]" />
             </Link>
           ) : (
             <Link
               href="/app"
               className="flex items-center rounded-xl px-1 py-2"
             >
-              <BrandLogo
-                variant="full"
-                className="h-7 w-auto text-[#151515]"
-              />
+              <BrandLogo variant="full" className="h-7 w-auto text-[#151515]" />
             </Link>
           )}
         </div>
@@ -179,9 +182,7 @@ export function AppSidebar() {
               'border border-black/[0.06] bg-white/20',
               'text-[#7a8587] transition-all',
               'hover:border-[#4FA1AF]/30 hover:bg-white/40',
-              collapsed
-                ? 'justify-center'
-                : 'gap-3 px-3',
+              collapsed ? 'justify-center' : 'gap-3 px-3',
             ].join(' ')}
             title={collapsed ? 'Search' : undefined}
           >
@@ -215,7 +216,7 @@ export function AppSidebar() {
         >
           {!collapsed && (
             <div className="mb-2 px-2">
-              <span className="font-sans text-[10px] font-medium uppercase tracking-[0.16em] text-[#9ca6a7]">
+              <span className="font-sans text-[10px] font-medium tracking-[0.16em] text-[#9ca6a7] uppercase">
                 Workspace
               </span>
             </div>
@@ -235,9 +236,7 @@ export function AppSidebar() {
                   className={[
                     'group relative flex h-11 items-center rounded-xl',
                     'transition-all duration-200',
-                    collapsed
-                      ? 'justify-center'
-                      : 'gap-3 px-3',
+                    collapsed ? 'justify-center' : 'gap-3 px-3',
                     active
                       ? 'bg-[#dff2f4]/20 text-[#182326]'
                       : 'text-[#657072] hover:bg-black/[0.035] hover:text-[#20282a]',
@@ -264,9 +263,7 @@ export function AppSidebar() {
                       <div
                         className={[
                           'font-instrument-serif text-[18px] leading-none',
-                          active
-                            ? 'text-[#182326]'
-                            : 'text-[#41494b]',
+                          active ? 'text-[#182326]' : 'text-[#41494b]',
                         ].join(' ')}
                       >
                         {item.name}
@@ -282,7 +279,7 @@ export function AppSidebar() {
           <div className="mt-8">
             {!collapsed && (
               <div className="mb-2 px-2">
-                <span className="font-sans text-[10px] font-medium uppercase tracking-[0.16em] text-[#9ca6a7]">
+                <span className="font-sans text-[10px] font-medium tracking-[0.16em] text-[#9ca6a7] uppercase">
                   Manage
                 </span>
               </div>
@@ -294,9 +291,7 @@ export function AppSidebar() {
               className={[
                 'group flex h-11 items-center rounded-xl text-[#657072]',
                 'transition-colors hover:bg-black/[0.035] hover:text-[#20282a]',
-                collapsed
-                  ? 'justify-center'
-                  : 'gap-3 px-3',
+                collapsed ? 'justify-center' : 'gap-3 px-3',
                 pathname.startsWith('/app/settings')
                   ? 'bg-[#dff2f4] text-[#182326]'
                   : '',
@@ -336,9 +331,7 @@ export function AppSidebar() {
             ) : (
               <>
                 <ChevronLeft size={17} strokeWidth={1.5} />
-                <span className="font-sans text-[11px]">
-                  Collapse sidebar
-                </span>
+                <span className="font-sans text-[11px]">Collapse sidebar</span>
               </>
             )}
           </button>
@@ -359,9 +352,7 @@ export function AppSidebar() {
                 'overflow-hidden rounded-2xl border border-black/[0.07]',
                 'bg-white/95 shadow-[0_16px_50px_rgba(30,60,65,0.14)] backdrop-blur-xl',
                 'animate-in fade-in slide-in-from-bottom-2 duration-150',
-                collapsed
-                  ? 'left-2 w-60'
-                  : 'left-4 right-4',
+                collapsed ? 'left-2 w-60' : 'right-4 left-4',
               ].join(' ')}
             >
               <div className="border-b border-black/[0.06] px-4 py-3">
@@ -404,16 +395,18 @@ export function AppSidebar() {
             className={[
               'group flex w-full items-center rounded-xl',
               'transition-colors hover:bg-black/[0.035]',
-              collapsed
-                ? 'justify-center p-1.5'
-                : 'gap-3 px-2 py-2',
+              collapsed ? 'justify-center p-1.5' : 'gap-3 px-2 py-2',
             ].join(' ')}
           >
             {/* Avatar */}
             <Avatar className="h-9 w-9 shrink-0 border border-[#4FA1AF]/20 bg-[#dff2f4]">
               <AvatarImage src={user?.image || undefined} alt="" />
               <AvatarFallback className="bg-[#dff2f4] font-sans text-[11px] font-medium text-[#438d98]">
-                {isSessionLoading ? <CircleUserRound size={19} strokeWidth={1.4} /> : initials}
+                {isSessionLoading ? (
+                  <CircleUserRound size={19} strokeWidth={1.4} />
+                ) : (
+                  initials
+                )}
               </AvatarFallback>
             </Avatar>
 
@@ -441,7 +434,7 @@ export function AppSidebar() {
             )}
 
             {collapsed && (
-              <span className="absolute left-full ml-3 hidden whitespace-nowrap rounded-lg bg-[#202627] px-2.5 py-1.5 font-sans text-[11px] text-white shadow-lg group-hover:block">
+              <span className="absolute left-full ml-3 hidden rounded-lg bg-[#202627] px-2.5 py-1.5 font-sans text-[11px] whitespace-nowrap text-white shadow-lg group-hover:block">
                 Account
               </span>
             )}
@@ -461,16 +454,12 @@ export function AppSidebar() {
               href={item.href}
               className={[
                 'flex h-12 min-w-[70px] flex-col items-center justify-center gap-1 rounded-xl',
-                active
-                  ? 'bg-[#dff2f4] text-[#398b98]'
-                  : 'text-[#8a9495]',
+                active ? 'bg-[#dff2f4] text-[#398b98]' : 'text-[#8a9495]',
               ].join(' ')}
             >
               <Icon size={18} strokeWidth={1.6} />
 
-              <span className="font-sans text-[9px]">
-                {item.name}
-              </span>
+              <span className="font-sans text-[9px]">{item.name}</span>
             </Link>
           );
         })}
@@ -481,9 +470,7 @@ export function AppSidebar() {
         >
           <Settings size={18} strokeWidth={1.6} />
 
-          <span className="font-sans text-[9px]">
-            Settings
-          </span>
+          <span className="font-sans text-[9px]">Settings</span>
         </Link>
       </nav>
     </>

@@ -28,6 +28,7 @@ model User {
   accounts   Account[]
   sessions   Session[]
   notes      Note[]
+  pings      Ping[]
   workspaces Workspace[]
 }
 
@@ -122,4 +123,27 @@ model Tag {
   id    String @id @default(cuid())
   name  String @unique
   notes Note[] @relation("NoteToTag")
+}
+
+// * ---------------------------------
+// *             PINGS
+// * ---------------------------------
+
+// Quick brain-dump captures. Lighter weight than a Note - no title,
+// no manual organization. A ping is "promoted" into a Note (and removed
+// from this table) once the user decides it deserves to be expanded.
+model Ping {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 768 dimensions matches Gemini's text-embedding-004 model
+  embedding Unsupported("vector(768)")?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
 }

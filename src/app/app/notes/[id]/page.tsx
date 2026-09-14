@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, useTransition } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { DotPanel } from '@/components/app/DotPanel';
 import { ButtonPrimary } from '@/components/ButtonPrimary';
 import { motion } from 'framer-motion';
@@ -13,13 +13,20 @@ import { MarkdownEditor } from '@/components/app/MarkdownEditor';
 export default function EditNotePage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const noteId = params.id as string;
+
+  // When a ping is promoted straight into an expansion (Pings tab ->
+  // "Expand into note"), we land here with ?expand=1 and kick off the
+  // same expand flow automatically once the note has loaded.
+  const autoExpand = searchParams.get('expand') === '1';
+  const hasAutoExpanded = useRef(false);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [expandedContent, setExpandedContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const [isSaving, startSaveTransition] = useTransition();
   const [isExpanding, setIsExpanding] = useState(false);
 
@@ -42,7 +49,7 @@ export default function EditNotePage() {
 
   const handleSave = () => {
     if (!title.trim() || !content.trim()) return;
-    
+
     startSaveTransition(async () => {
       try {
         await updateNote(noteId, title, content);
@@ -58,7 +65,7 @@ export default function EditNotePage() {
     try {
       // First save current state before expanding, to ensure context is up to date
       await updateNote(noteId, title, content);
-      
+
       const res = await expandNote(noteId);
       if (res?.success && res.content) {
         setExpandedContent(res.content);
@@ -69,6 +76,25 @@ export default function EditNotePage() {
       setIsExpanding(false);
     }
   };
+
+  // Auto-run the expand step once, after the note has finished loading,
+  // when we arrived here via the Pings "Expand into note" action.
+  useEffect(() => {
+    if (
+      autoExpand &&
+      !isLoading &&
+      !hasAutoExpanded.current &&
+      title.trim() &&
+      content.trim()
+    ) {
+      hasAutoExpanded.current = true;
+
+      // Drop the query param so a refresh doesn't re-trigger this.
+      router.replace(`/app/notes/${noteId}`);
+      handleExpand();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoExpand, isLoading, title, content]);
 
   const handleAcceptExpansion = () => {
     if (!expandedContent) return;
@@ -96,58 +122,75 @@ export default function EditNotePage() {
     <div className="flex h-full min-h-0 w-full flex-col">
       <DotPanel>
         <div className="relative z-10 flex min-h-full w-full flex-col px-12 py-10">
-          <div className="flex items-center justify-between mb-8">
-            <Link 
-              href="/app/notes" 
+          <div className="mb-8 flex items-center justify-between">
+            <Link
+              href="/app/notes"
               className="flex items-center gap-2 text-[#8a8a8a] transition-colors hover:text-[#1a1a1a]"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Notes</span>
             </Link>
-            
+
             <div className="flex items-center gap-3">
               <button
                 onClick={handleExpand}
-                disabled={isExpanding || isSaving || !title.trim() || !content.trim()}
+                disabled={
+                  isExpanding || isSaving || !title.trim() || !content.trim()
+                }
                 className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-[#1a1a1a] shadow-sm transition-all hover:border-[#4FA1AF] hover:text-[#4FA1AF] disabled:opacity-50"
               >
-                {isExpanding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-[#4FA1AF]" />}
+                {isExpanding ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4 text-[#4FA1AF]" />
+                )}
                 <span>{isExpanding ? 'Expanding...' : 'Expand Note'}</span>
               </button>
 
-              <ButtonPrimary 
-                onClick={handleSave} 
-                disabled={isSaving || isExpanding || !title.trim() || !content.trim()}
+              <ButtonPrimary
+                onClick={handleSave}
+                disabled={
+                  isSaving || isExpanding || !title.trim() || !content.trim()
+                }
                 className="flex items-center gap-2 px-4 py-2 text-sm disabled:opacity-50"
               >
-                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {isSaving ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
                 <span>{isSaving ? 'Saving...' : 'Save Changes'}</span>
               </ButtonPrimary>
             </div>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="flex flex-1 flex-col mx-auto w-full max-w-3xl"
+            className="mx-auto flex w-full max-w-3xl flex-1 flex-col"
           >
             <input
               type="text"
               placeholder="Note Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-transparent font-instrument-serif text-5xl text-[#1a1a1a] outline-none placeholder:text-gray-300 mb-8"
+              className="font-instrument-serif mb-8 w-full bg-transparent text-5xl text-[#1a1a1a] outline-none placeholder:text-gray-300"
             />
-            
+
             <MarkdownEditor value={content} onChange={setContent} />
 
             {expandedContent && (
               <section className="mt-8 rounded-xl border border-[#4FA1AF]/40 bg-[#f4fafb] p-5">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-[#1a1a1a]">Expanded note ready for review</p>
-                    <p className="text-sm text-[#5f6b6d]">Review the formatted Markdown, then choose whether to keep it.</p>
+                    <p className="text-sm font-semibold text-[#1a1a1a]">
+                      Expanded note ready for review
+                    </p>
+                    <p className="text-sm text-[#5f6b6d]">
+                      Review the formatted Markdown, then choose whether to keep
+                      it.
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <button
