@@ -41,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
-      <body className="flex min-h-screen flex-col antialiased">
+      <body className="flex h-dvh overflow-hidden flex-col antialiased">
         <Providers>
           {children}
           <Toaster richColors position="bottom-right" />

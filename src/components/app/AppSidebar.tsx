@@ -103,7 +103,7 @@ export function AppSidebar() {
       <aside
         className={[
           'relative z-30 hidden h-screen shrink-0 flex-col',
-          'backdrop-blur-xl md:flex',
+          'md:flex',
           'transition-[width] duration-300 ease-out',
           collapsed ? 'w-[76px]' : 'w-[248px]',
         ].join(' ')}

@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Sparkles, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { getNoteById, updateNote, expandNote } from '@/app/actions/notes';
+import { MarkdownEditor } from '@/components/app/MarkdownEditor';
 
 export default function EditNotePage() {
   const params = useParams();
@@ -16,6 +17,7 @@ export default function EditNotePage() {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [expandedContent, setExpandedContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
   const [isSaving, startSaveTransition] = useTransition();
@@ -59,13 +61,27 @@ export default function EditNotePage() {
       
       const res = await expandNote(noteId);
       if (res?.success && res.content) {
-        setContent(res.content);
+        setExpandedContent(res.content);
       }
     } catch (error) {
       console.error('Failed to expand note:', error);
     } finally {
       setIsExpanding(false);
     }
+  };
+
+  const handleAcceptExpansion = () => {
+    if (!expandedContent) return;
+
+    startSaveTransition(async () => {
+      try {
+        await updateNote(noteId, title, expandedContent);
+        setContent(expandedContent);
+        setExpandedContent(null);
+      } catch (error) {
+        console.error('Failed to accept expanded note:', error);
+      }
+    });
   };
 
   if (isLoading) {
@@ -77,9 +93,9 @@ export default function EditNotePage() {
   }
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex min-h-full w-full flex-col">
       <DotPanel>
-        <div className="relative z-10 flex h-full w-full flex-col px-12 py-10">
+        <div className="relative z-10 flex min-h-full w-full flex-col px-12 py-10">
           <div className="flex items-center justify-between mb-8">
             <Link 
               href="/app/notes" 
@@ -124,12 +140,35 @@ export default function EditNotePage() {
               className="w-full bg-transparent font-instrument-serif text-5xl text-[#1a1a1a] outline-none placeholder:text-gray-300 mb-8"
             />
             
-            <textarea
-              placeholder="Start typing your structured thoughts here..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full flex-1 resize-none bg-transparent text-lg text-[#4a4a4a] outline-none placeholder:text-gray-300 leading-relaxed"
-            />
+            <MarkdownEditor value={content} onChange={setContent} />
+
+            {expandedContent && (
+              <section className="mt-8 rounded-xl border border-[#4FA1AF]/40 bg-[#f4fafb] p-5">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-[#1a1a1a]">Expanded note ready for review</p>
+                    <p className="text-sm text-[#5f6b6d]">Review the formatted Markdown, then choose whether to keep it.</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setExpandedContent(null)}
+                      disabled={isSaving}
+                      className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-[#4a4a4a] transition-colors hover:border-gray-400 disabled:opacity-50"
+                    >
+                      Decline
+                    </button>
+                    <ButtonPrimary
+                      onClick={handleAcceptExpansion}
+                      disabled={isSaving}
+                      className="px-4 py-2 text-sm disabled:opacity-50"
+                    >
+                      {isSaving ? 'Accepting...' : 'Accept changes'}
+                    </ButtonPrimary>
+                  </div>
+                </div>
+                <MarkdownEditor value={expandedContent} readOnly />
+              </section>
+            )}
           </motion.div>
         </div>
       </DotPanel>

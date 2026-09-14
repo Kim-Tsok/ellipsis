@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { createNote } from '@/app/actions/notes';
+import { MarkdownEditor } from '@/components/app/MarkdownEditor';
 
 export default function NoteEditorPage() {
   const router = useRouter();
@@ -31,9 +32,9 @@ export default function NoteEditorPage() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex min-h-full w-full flex-col">
       <DotPanel>
-        <div className="relative z-10 flex h-full w-full flex-col px-12 py-10">
+        <div className="relative z-10 flex min-h-full w-full flex-col px-12 py-10">
           <div className="flex items-center justify-between mb-8">
             <Link 
               href="/app/notes" 
@@ -67,12 +68,7 @@ export default function NoteEditorPage() {
               className="w-full bg-transparent font-instrument-serif text-5xl text-[#1a1a1a] outline-none placeholder:text-gray-300 mb-8"
             />
             
-            <textarea
-              placeholder="Start typing your structured thoughts here..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full flex-1 resize-none bg-transparent text-lg text-[#4a4a4a] outline-none placeholder:text-gray-300 leading-relaxed"
-            />
+            <MarkdownEditor value={content} onChange={setContent} />
           </motion.div>
         </div>
       </DotPanel>

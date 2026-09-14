@@ -78,14 +78,19 @@ export async function expandNote(noteId: string): Promise<{ success: boolean; co
     .join('\n\n');
 
   const prompt = `
-You are an expert workspace assistant. Expand and add missing details to the note below. 
-Use information from the provided Related Notes for context where relevant. Keep the same tone.
+You are an expert workspace assistant. Expand the note content below with useful missing detail.
+Use the related notes only when they are genuinely relevant and keep the original tone.
 
-Base Note Title: ${currentNote.title}
-Base Note Content: ${currentNote.content}
+Return only the revised note body as clean Markdown. Do not add a preamble, commentary, or labels such as "Base Note Title", "Base Note Content", or "Related Context Notes". Do not repeat the title; it is stored separately.
 
---- Related Context Notes ---
+<note>
+  <title>${currentNote.title}</title>
+  <content>${currentNote.content}</content>
+</note>
+
+<related-notes>
 ${contextText || 'No related notes found.'}
+</related-notes>
 `;
 
   const response = await ai.models.generateContent({
@@ -96,12 +101,7 @@ ${contextText || 'No related notes found.'}
   const expandedContent = response.text;
   if (!expandedContent) throw new Error('Failed to expand content.');
 
-  await prisma.note.update({
-    where: { id: noteId },
-    data: { content: expandedContent },
-  });
-
-  // This object now strictly matches the explicit Promise return type
+  // Return a proposal for the editor to review. The note is only updated after acceptance.
   return { success: true, content: expandedContent };
 }
 

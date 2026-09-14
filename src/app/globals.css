@@ -114,6 +114,10 @@
 }
 
 @layer base {
+  html {
+    overflow: hidden;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -215,3 +219,43 @@ div[data-radix-popper-content-wrapper] {
 div[data-state='open'] ~ div.fixed.inset-0 {
   pointer-events: none !important;
 }
+
+.obsidian-editor .ProseMirror {
+  color: #3f494b;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.obsidian-editor .ProseMirror > *:first-child { margin-top: 0; }
+.obsidian-editor .ProseMirror > *:last-child { margin-bottom: 0; }
+
+.obsidian-editor .ProseMirror h1,
+.obsidian-editor .ProseMirror h2,
+.obsidian-editor .ProseMirror h3 {
+  color: #1a1a1a;
+  font-family: var(--font-instrument-serif), 'Times New Roman', serif;
+  line-height: 1.2;
+  margin: 1.5em 0 0.5em;
+}
+
+.obsidian-editor .ProseMirror h1 { font-size: 2rem; }
+.obsidian-editor .ProseMirror h2 { font-size: 1.55rem; }
+.obsidian-editor .ProseMirror h3 { font-size: 1.25rem; }
+.obsidian-editor .ProseMirror p { margin: 0.75em 0; }
+.obsidian-editor .ProseMirror ul,
+.obsidian-editor .ProseMirror ol { margin: 0.75em 0; padding-left: 1.5rem; }
+.obsidian-editor .ProseMirror blockquote { border-left: 3px solid #4fa1af; color: #657173; margin: 1em 0; padding-left: 1rem; }
+.obsidian-editor .ProseMirror code { background: #eff5f6; border-radius: 0.25rem; color: #244d55; padding: 0.15rem 0.3rem; }
+.obsidian-editor .ProseMirror pre { background: #1f2d30; border-radius: 0.5rem; color: #eaf4f5; overflow-x: auto; padding: 1rem; }
+.obsidian-editor .ProseMirror pre code { background: transparent; color: inherit; padding: 0; }
+.obsidian-editor .ProseMirror a { color: #287787; text-decoration: underline; text-underline-offset: 0.2em; }
+.obsidian-editor .ProseMirror p.is-editor-empty:first-child::before { color: #9ca3af; content: 'Start typing your structured thoughts here…'; float: left; height: 0; pointer-events: none; }
+
+.note-card-markdown > * { margin: 0 0 0.5rem; }
+.note-card-markdown h1,
+.note-card-markdown h2,
+.note-card-markdown h3 { color: #334749; font-family: var(--font-instrument-serif), 'Times New Roman', serif; font-size: 1.1rem; line-height: 1.25; }
+.note-card-markdown ul,
+.note-card-markdown ol { padding-left: 1.1rem; }
+.note-card-markdown a { color: #287787; text-decoration: underline; }
+.note-card-markdown code { border-radius: 0.2rem; background: rgb(79 161 175 / 0.1); padding: 0.1rem 0.2rem; }

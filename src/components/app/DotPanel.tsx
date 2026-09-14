@@ -9,7 +9,7 @@ export function DotPanel({ children }: { children: ReactNode }) {
       initial={{ opacity: 0, scale: 0.98, y: 10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl bg-[#fdfdfd] shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5"
+      className="relative flex h-full w-full flex-col overflow-x-hidden overflow-y-auto overscroll-contain rounded-3xl bg-[#fdfdfd] shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5"
     >
       {/* Dot pattern overlay */}
       <div 
@@ -21,7 +21,7 @@ export function DotPanel({ children }: { children: ReactNode }) {
       />
       
       {/* Content wrapper */}
-      <div className="relative z-10 flex h-full w-full flex-col">
+      <div className="relative z-10 flex min-h-full w-full flex-col">
         {children}
       </div>
     </motion.div>

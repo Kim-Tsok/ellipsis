@@ -7,6 +7,8 @@ import { Plus, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { ButtonPrimary } from '@/components/ButtonPrimary';
 import { getNotes } from '@/app/actions/notes';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Note {
   id: string;
@@ -34,9 +36,9 @@ export default function NotesIndexPage() {
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex min-h-full w-full flex-col">
       <DotPanel>        
-        <div className="relative z-10 flex h-full w-full flex-col px-12 pb-12 pt-12">
+        <div className="relative z-10 flex min-h-full w-full flex-col px-12 pb-12 pt-12">
           <div className="flex items-center justify-between mb-8">
             <h1 className="font-instrument-serif text-4xl text-[#1a1a1a]">Your Notes</h1>
             <Link href="/app/notes/new">
@@ -47,7 +49,7 @@ export default function NotesIndexPage() {
             </Link>
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-4">
+          <div className="flex-1 pr-4">
             {isLoading ? (
               <div className="flex h-48 items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
@@ -74,9 +76,9 @@ export default function NotesIndexPage() {
                       <h3 className="font-instrument-serif text-2xl text-[#1a1a1a] group-hover:text-[#4FA1AF] transition-colors line-clamp-1">
                         {note.title}
                       </h3>
-                      <p className="mt-2 text-sm text-[#8a8a8a] line-clamp-4 leading-relaxed">
-                        {note.content}
-                      </p>
+                      <div className="note-card-markdown mt-2 h-24 overflow-hidden text-sm text-[#687577]">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{note.content}</ReactMarkdown>
+                      </div>
                     </div>
                     
                     <div className="mt-4 flex items-center justify-between border-t border-gray-100/60 pt-3 text-xs text-gray-400">
