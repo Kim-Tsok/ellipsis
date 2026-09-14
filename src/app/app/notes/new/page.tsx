@@ -32,7 +32,7 @@ export default function NoteEditorPage() {
   };
 
   return (
-    <div className="flex min-h-full w-full flex-col">
+    <div className="flex h-full min-h-0 w-full flex-col">
       <DotPanel>
         <div className="relative z-10 flex min-h-full w-full flex-col px-12 py-10">
           <div className="flex items-center justify-between mb-8">
