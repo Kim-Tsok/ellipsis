@@ -66,7 +66,7 @@ export default function NotesIndexPage() {
               >
                 {notes.map((note) => (
                   <Link 
-                    href={`app/notes/${note.id}`} 
+                    href={`/app/notes/${note.id}`} 
                     key={note.id} 
                     className="group flex h-56 flex-col justify-between rounded-2xl border border-gray-100 bg-white/80 p-6 shadow-sm backdrop-blur-sm transition-all hover:border-[#4FA1AF]/30 hover:shadow-md cursor-pointer"
                   >

@@ -131,8 +131,9 @@ export async function updateNote(id: string, title: string, content: string) {
 
   // Re-compute embedding so RAG stays accurate after manual edits
   const embeddingResponse = await ai.models.embedContent({
-    model: 'text-embedding-004',
+    model: 'gemini-embedding-001',
     contents: textToEmbed,
+    config: { outputDimensionality: 768 },
   });
 
   const vector = embeddingResponse.embeddings?.[0]?.values;
