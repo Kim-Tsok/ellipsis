@@ -31,7 +31,12 @@ type FormatButtonProps = {
   children: React.ReactNode;
 };
 
-function FormatButton({ label, active = false, onClick, children }: FormatButtonProps) {
+function FormatButton({
+  label,
+  active = false,
+  onClick,
+  children,
+}: FormatButtonProps) {
   return (
     <button
       type="button"
@@ -39,7 +44,9 @@ function FormatButton({ label, active = false, onClick, children }: FormatButton
       title={label}
       onClick={onClick}
       className={`grid size-8 place-items-center rounded-md transition-colors ${
-        active ? 'bg-[#4FA1AF] text-white' : 'text-[#4a4a4a] hover:bg-[#edf6f7] hover:text-[#1a1a1a]'
+        active
+          ? 'bg-[#4FA1AF] text-white'
+          : 'text-[#4a4a4a] hover:bg-[#edf6f7] hover:text-[#1a1a1a]'
       }`}
     >
       {children}
@@ -47,7 +54,11 @@ function FormatButton({ label, active = false, onClick, children }: FormatButton
   );
 }
 
-export function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEditorProps) {
+export function MarkdownEditor({
+  value,
+  onChange,
+  readOnly = false,
+}: MarkdownEditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
     editable: !readOnly,
@@ -65,16 +76,20 @@ export function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEd
     editorProps: {
       attributes: {
         class: readOnly
-          ? 'min-h-52 px-5 py-4 outline-none relative'
-          : 'min-h-96 px-5 py-4 outline-none relative',
+          ? 'min-h-52 px-2 py-4 outline-none relative'
+          : 'min-h-96 px-2 py-4 outline-none relative',
       },
     },
-    onUpdate: ({ editor: updatedEditor }) => onChange?.(updatedEditor.getMarkdown()),
+    onUpdate: ({ editor: updatedEditor }) =>
+      onChange?.(updatedEditor.getMarkdown()),
   });
 
   useEffect(() => {
     if (editor && editor.getMarkdown() !== value) {
-      editor.commands.setContent(value, { contentType: 'markdown', emitUpdate: false });
+      editor.commands.setContent(value, {
+        contentType: 'markdown',
+        emitUpdate: false,
+      });
     }
   }, [editor, value]);
 
@@ -105,32 +120,70 @@ export function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEd
           options={{ placement: 'top', offset: 10 }}
           className="flex items-center gap-0.5 rounded-lg border border-gray-200 bg-white p-1 shadow-xl"
         >
-          <FormatButton label="Bold" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
+          <FormatButton
+            label="Bold"
+            active={editor.isActive('bold')}
+            onClick={() => editor.chain().focus().toggleBold().run()}
+          >
             <Bold className="size-4" />
           </FormatButton>
-          <FormatButton label="Italic" active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}>
+          <FormatButton
+            label="Italic"
+            active={editor.isActive('italic')}
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+          >
             <Italic className="size-4" />
           </FormatButton>
-          <FormatButton label="Strikethrough" active={editor.isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()}>
+          <FormatButton
+            label="Strikethrough"
+            active={editor.isActive('strike')}
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+          >
             <Strikethrough className="size-4" />
           </FormatButton>
-          <FormatButton label="Link" active={editor.isActive('link')} onClick={setLink}>
+          <FormatButton
+            label="Link"
+            active={editor.isActive('link')}
+            onClick={setLink}
+          >
             <LinkIcon className="size-4" />
           </FormatButton>
           <span className="mx-1 h-5 w-px bg-gray-200" />
-          <FormatButton label="Heading" active={editor.isActive('heading')} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+          <FormatButton
+            label="Heading"
+            active={editor.isActive('heading')}
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+          >
             <Heading2 className="size-4" />
           </FormatButton>
-          <FormatButton label="Bulleted list" active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
+          <FormatButton
+            label="Bulleted list"
+            active={editor.isActive('bulletList')}
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+          >
             <List className="size-4" />
           </FormatButton>
-          <FormatButton label="Numbered list" active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+          <FormatButton
+            label="Numbered list"
+            active={editor.isActive('orderedList')}
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          >
             <ListOrdered className="size-4" />
           </FormatButton>
-          <FormatButton label="Quote" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+          <FormatButton
+            label="Quote"
+            active={editor.isActive('blockquote')}
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          >
             <Quote className="size-4" />
           </FormatButton>
-          <FormatButton label="Code" active={editor.isActive('code')} onClick={() => editor.chain().focus().toggleCode().run()}>
+          <FormatButton
+            label="Code"
+            active={editor.isActive('code')}
+            onClick={() => editor.chain().focus().toggleCode().run()}
+          >
             <Code className="size-4" />
           </FormatButton>
         </BubbleMenu>
@@ -138,7 +191,7 @@ export function MarkdownEditor({ value, onChange, readOnly = false }: MarkdownEd
       <div className="relative">
         <EditorContent editor={editor} />
         {!readOnly && isEmpty && (
-          <div className="absolute top-4 left-5 text-gray-400 pointer-events-none text-base">
+          <div className="pointer-events-none absolute top-5 left-2 text-base text-gray-400">
             Start typing...
           </div>
         )}
